@@ -28,13 +28,15 @@ public class RandomWaypointBaru extends MovementModel {
     private List<Coord> sudahDilewati = new ArrayList<>();
 
     List<Coord> tujuan = new ArrayList<>();
-
+    List<Coord> dest = new ArrayList<>();
     private Coord location;
+    Random rand = new Random();
 
     public RandomWaypointBaru(Settings settings) {
         super(settings);
         int[] coords = settings.getCsvInts("nodeLocation", 2);
         this.location = new Coord(coords[0], coords[1]);
+//        System.out.println(this.getInitialLocation());
     }
 
     protected RandomWaypointBaru(RandomWaypointBaru rwp) {
@@ -46,27 +48,38 @@ public class RandomWaypointBaru extends MovementModel {
     public Coord getInitialLocation() {
         this.lastWaypoint = this.location;
         return this.location;
+
     }
 
     @Override
     public Path getPath() {
-        Random rand = new Random();
+//        for (int i = 1; i < PATH_LENGTH; i++) {
+//            int rand = j.nextInt(4);
+//            System.out.println(rand);
+//            dest = GetNextPath().get(rand);
+//            c = dest.getLocation();
         ambilSemuaTujuan();
         Path p = new Path(generateSpeed());
         p.addWaypoint(this.lastWaypoint.clone());
         if (this.sudahDilewati.size() != this.tujuan.size()) {
             Coord c = this.lastWaypoint;
             for (int i = 0; i < this.tujuan.size(); i++) {
-                for (Coord loc : this.tujuan) {
-                    c = loc;
-                    p.addWaypoint(c);
-                    this.sudahDilewati.add(loc);
-                }
+                 int random = (i) * rng.nextInt(1) + 0;
+                 Coord dest = this.tujuan.get(random);
+                 
+                
+//                for (Coord loc : this.dest) {
+//                    c = loc;
+//                    p.addWaypoint(c);
+//                    this.sudahDilewati.add(loc);
+//                }
             }
+//            System.out.println(this.dest);
             this.lastWaypoint = c;
         } else {
             p.addWaypoint(getInitialLocation());
         }
+        System.out.println(p);
         return p;
     }
 
