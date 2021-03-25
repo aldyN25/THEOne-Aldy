@@ -9,6 +9,7 @@ import core.DTNHost;
 import core.Settings;
 import core.SimScenario;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -24,16 +25,15 @@ public class RandomWaypointBaru extends MovementModel {
     private static final int PATH_LENGTH = 1;
 
     private Coord lastWaypoint;
-
-    private List<Coord> sudahDilewati = new ArrayList<>();
-
+    List<Coord> sudahDilewati = new ArrayList<>();
     List<Coord> tujuan = new ArrayList<>();
-    List<Coord> dest = new ArrayList<>();
+    Coord dest;
     private Coord location;
     Random rand = new Random();
 
     public RandomWaypointBaru(Settings settings) {
         super(settings);
+
         int[] coords = settings.getCsvInts("nodeLocation", 2);
         this.location = new Coord(coords[0], coords[1]);
 //        System.out.println(this.getInitialLocation());
@@ -48,6 +48,11 @@ public class RandomWaypointBaru extends MovementModel {
     public Coord getInitialLocation() {
         this.lastWaypoint = this.location;
         return this.location;
+//        assert rng != null : "MovementModel not initialized!";
+//        Coord b = randomCoord();
+//
+//        this.lastWaypoint = b;
+//        return b;
 
     }
 
@@ -63,23 +68,27 @@ public class RandomWaypointBaru extends MovementModel {
         p.addWaypoint(this.lastWaypoint.clone());
         if (this.sudahDilewati.size() != this.tujuan.size()) {
             Coord c = this.lastWaypoint;
+
             for (int i = 0; i < this.tujuan.size(); i++) {
-                 int random = (i) * rng.nextInt(1) + 0;
-                 Coord dest = this.tujuan.get(random);
-                 
-                
-//                for (Coord loc : this.dest) {
+
+                int randomIndex = rand.nextInt(tujuan.size());
+                dest = this.tujuan.get(randomIndex);
+                for (Coord loc : this.tujuan) {
+                    c = dest;
 //                    c = loc;
-//                    p.addWaypoint(c);
-//                    this.sudahDilewati.add(loc);
-//                }
+                    p.addWaypoint(loc);
+                    this.sudahDilewati.add(loc);
+
+                }
+//                System.out.println(tujuan.remove(c));
             }
-//            System.out.println(this.dest);
+            //  tujuan.remove(dest);
+            System.out.println(tujuan.remove(c));
             this.lastWaypoint = c;
         } else {
             p.addWaypoint(getInitialLocation());
         }
-        System.out.println(p);
+
         return p;
     }
 
@@ -96,7 +105,7 @@ public class RandomWaypointBaru extends MovementModel {
     public void ambilSemuaTujuan() {
         List<DTNHost> semuaNodes = SimScenario.getInstance().getHosts();
         List<DTNHost> tujuanNodes = new ArrayList<>();
-        System.out.println(semuaNodes);
+//        System.out.println(semuaNodes);
         for (DTNHost host : semuaNodes) {
             if (host.toString().startsWith("kota")) {
                 tujuanNodes.add(host);
@@ -104,6 +113,7 @@ public class RandomWaypointBaru extends MovementModel {
         }
         for (DTNHost a : tujuanNodes) {
             this.tujuan.add(a.getLocation());
+
         }
     }
 }
