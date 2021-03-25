@@ -82,8 +82,8 @@ public class RandomWaypointBaru extends MovementModel {
                 }
 //                System.out.println(tujuan.remove(c));
             }
-            //  tujuan.remove(dest);
-            System.out.println(tujuan.remove(c));
+              tujuan.remove(c);
+//            System.out.println(tujuan.remove(c));
             this.lastWaypoint = c;
         } else {
             p.addWaypoint(getInitialLocation());
