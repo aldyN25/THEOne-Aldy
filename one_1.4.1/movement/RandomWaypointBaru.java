@@ -48,11 +48,13 @@ public class RandomWaypointBaru extends MovementModel {
     public Coord getInitialLocation() {
         this.lastWaypoint = this.location;
         return this.location;
-//        assert rng != null : "MovementModel not initialized!";
-//        Coord b = randomCoord();
+//       assert rng != null : "MovementModel not initialized!";
+//        double x = rng.nextDouble() * getMaxX();
+//        double y = rng.nextDouble() * getMaxY();
+//        Coord c = new Coord(x, y);
 //
-//        this.lastWaypoint = b;
-//        return b;
+//        this.lastWaypoint = c;
+//        return c;
 
     }
 
@@ -70,13 +72,12 @@ public class RandomWaypointBaru extends MovementModel {
             Coord c = this.lastWaypoint;
 
             for (int i = 0; i < this.tujuan.size(); i++) {
-
                 int randomIndex = rand.nextInt(tujuan.size());
                 dest = this.tujuan.get(randomIndex);
+                
                 for (Coord loc : this.tujuan) {
                     c = dest;
-//                    c = loc;
-                    p.addWaypoint(loc);
+                    p.addWaypoint(c);
                     this.sudahDilewati.add(loc);
 
                 }
