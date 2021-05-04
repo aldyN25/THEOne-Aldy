@@ -22,12 +22,12 @@ public class RandomWaypointAldy extends MovementModel {
 	private static final int PATH_LENGTH = 1;
 	private Coord lastWaypoint;
         private Coord startLoc;
-        private Random rand;
+//        private Random rand;
         
     private Coord location;
     
         private List<Coord> tujuan = new ArrayList<Coord>();
-        private List<Coord> sudah = new ArrayList<Coord>();
+//        private List<Coord> sudah = new ArrayList<Coord>();
 	
 	public RandomWaypointAldy(Settings settings) {
 		super(settings);
@@ -50,7 +50,9 @@ public class RandomWaypointAldy extends MovementModel {
 	@Override
 	public Coord getInitialLocation() {
 		this.lastWaypoint = this.location;
+                tujuan.add(this.startLoc);
                 return this.location;
+                
 	}
 	
 	@Override
@@ -60,6 +62,7 @@ public class RandomWaypointAldy extends MovementModel {
                 if(tujuan.isEmpty()){
                     //menjalankan method ambil tujuan
                     ambilSemuaTujuan();
+                    
                 }
                 
 		Path p;
