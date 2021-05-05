@@ -9,6 +9,7 @@ import core.DTNHost;
 import core.Settings;
 import core.SimScenario;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,10 +67,7 @@ public class RandomWaypointAldy1 extends MovementModel {
 
     @Override
     public Path getPath() {
-        Map<List<DTNHost>, List<Coord>> distan = new HashMap<List<DTNHost>, List<Coord>>();
-        List<Coord> a = new ArrayList<>();
-        List<Coord> b = null;
-
+        
         //jika list tujuan masih kosong
         if (tujuan.isEmpty()) {
             //menjalankan method ambil tujuan
@@ -84,40 +82,40 @@ public class RandomWaypointAldy1 extends MovementModel {
                 untuk mengambil koordinat ke dalam waypoint
          */
 
-        for (Coord d : tujuan) {
-            if (!distan.containsKey(tujuan)) {
-                b = new ArrayList<Coord>();
-            } else {
-                b = distan.get(tujuan);
-            }
-
-            b.add(d);
-            //   distan.put(tujuan, b);
-        }
-
         while (tujuan.size() != 0) {
             //index, untuk mengambil koordinat dari list tujuan, didapat secara random
 //            int i = randomTujuan(tujuan.size() - 1);
 
-//            c = tujuan.get(i);
-            Map<List<Coord>, Double> jaraknya = new HashMap<List<Coord>, Double>();
+//           
+            Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
+            
             for (Coord zi : tujuan) {
                 double z = c.distance(zi);
-                jaraknya.put(tujuan, z);
-
+                jaraknya.put(zi, z);
+                System.out.println("jarak : " + jaraknya.get(zi));
             }
-
-            //      double a = c.distance(tujuan);
-//             c = tujuan.get((int) a);
-//            c.distance((Coord) jarak);
-//            tujuan.add(c);
+            
+            double min;
+            min = Collections.min(jaraknya.values());
+            
+            for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
+                Coord key = entry.getKey();
+                Double value = entry.getValue();
+               
+                p.addWaypoint(key);
+               
+            }
+            
+            
             //mengambil koordinat random dari tujuan disimpan ke c
+//            c = tujuan.get(i);
             //masukkan koordinat ke path
-            p.addWaypoint(jaraknya);
+            System.out.println(c);
+            p.addWaypoint(c);
             //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
-//            tujuan.remove(c);
-            System.out.println(" " + c);
-            System.out.println(" " + p);
+            tujuan.remove(c);
+//            System.out.println(" " + c);
+//            System.out.println(" " + p);
         }
 
         this.lastWaypoint = location;
