@@ -30,7 +30,7 @@ public class RandomWaypointAldy1 extends MovementModel {
     private Coord lastWaypoint;
     private Coord startLoc;
     private Coord location;
-    double z;
+    private double z;
 
     private List<Coord> tujuan = new ArrayList<Coord>();
 //        private List<Coord> sudah = new ArrayList<Coord>();
@@ -88,7 +88,7 @@ public class RandomWaypointAldy1 extends MovementModel {
             Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
 
             for (Coord zi : tujuan) {
-                double z = c.distance(zi);
+                z = c.distance(zi);
                 jaraknya.put(zi, z);
                 System.out.println(zi + "jarak : " + jaraknya.get(zi));
             }
@@ -98,26 +98,24 @@ public class RandomWaypointAldy1 extends MovementModel {
 //            min = Collections.min(jaraknya.values());
             for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
 //                Coord b = entry.getKey();
-//                Double value = entry.getValue();
+                Double value = entry.getValue();
                 if (minimum == null || minimum.getValue() > entry.getValue()) {
                     minimum = entry;
+
                 }
-//                p.addWaypoint(minimum.getKey());
-                jaraknya.remove(minimum.getValue());
+                jaraknya.put(entry.getKey(), z);
+
             }
 
             System.out.println(" isinya apa: " + minimum.getKey());
             p.addWaypoint(minimum.getKey());
-
+            tujuan.remove(minimum.getKey());
             //mengambil koordinat random dari tujuan disimpan ke c
 //            c = tujuan.get();
             //masukkan koordinat ke path
 //            System.out.println(c);
             //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
 //            tujuan.remove((minimum.getKey()));
-            tujuan.remove(minimum.getKey());
-//            System.out.println(" " + c);
-//            System.out.println(" " + p);
         }
 
         this.lastWaypoint = location;
