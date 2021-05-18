@@ -9,12 +9,11 @@ import core.DTNHost;
 import core.Settings;
 import core.SimScenario;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import static movement.MovementModel.rng;
 
 /**
@@ -30,7 +29,7 @@ public class RandomWaypointAldy1 extends MovementModel {
     private Coord lastWaypoint;
     private Coord startLoc;
     private Coord location;
-    private double z;
+    private int z;
 
     private List<Coord> tujuan = new ArrayList<Coord>();
 //        private List<Coord> sudah = new ArrayList<Coord>();
@@ -85,39 +84,49 @@ public class RandomWaypointAldy1 extends MovementModel {
 //            int i = randomTujuan(tujuan.size() - 1);
 
 //           
-            Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
+            Map<Coord, Integer> jaraknya = new HashMap<Coord, Integer>();
 
             for (Coord zi : tujuan) {
-                z = c.distance(zi);
+                z = (int) c.distance(zi);
                 jaraknya.put(zi, z);
                 System.out.println(zi + "jarak : " + jaraknya.get(zi));
             }
 
-            Entry<Coord, Double> minimum = null;
-//            double min;
-//            min = Collections.min(jaraknya.values());
-            for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
+//            Entry<Coord, Double> minimum = null;
+            Coord min = null;
+            for (Map.Entry<Coord, Integer> entry : jaraknya.entrySet()) {
 //                Coord b = entry.getKey();
-                Double value = entry.getValue();
-                if (minimum == null || minimum.getValue() > entry.getValue()) {
-                    minimum = entry;
-
+                Integer value = entry.getValue();
+                if (min == null) {
+                    min = entry.getKey();
+                } else {
+                    if (entry.getValue() < jaraknya.get(min)) {
+                        min = entry.getKey();
+//                        jaraknya.put(min, z);
+                    }
                 }
-                jaraknya.put(entry.getKey(), z);
 
+//                    if (minimum == null || minimum.getValue() > entry.getValue()) {
+//                        minimum = entry;
+//
+//                    }
+//                    jaraknya.put(entry.getKey(), minimum.getValue());
+//                jaraknya.put(entry.getKey(), z);
+//                jaraknya.remove(entry.getKey());
             }
+            int i = tujuan.size() - 1;
+            min = tujuan.get(i);
+            System.out.println(" isinya apa: " + min);
 
-            System.out.println(" isinya apa: " + minimum.getKey());
-            p.addWaypoint(minimum.getKey());
-            tujuan.remove(minimum.getKey());
-            //mengambil koordinat random dari tujuan disimpan ke c
-//            c = tujuan.get();
             //masukkan koordinat ke path
-//            System.out.println(c);
-            //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
-//            tujuan.remove((minimum.getKey()));
-        }
+            p.addWaypoint(min);
 
+            //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
+            tujuan.remove(i);
+            //mengambil koordinat random dari tujuan disimpan ke c
+//            c = tujuan.get(i);
+
+        }
         this.lastWaypoint = location;
         return p;
     }
