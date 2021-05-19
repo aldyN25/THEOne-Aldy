@@ -114,7 +114,10 @@ public class RandomWaypointAldy1 extends MovementModel {
 //                jaraknya.put(entry.getKey(), z);
 //                jaraknya.remove(entry.getKey());
             }
+            //index, untuk mengambil koordinat dari list tujuan,
             int i = tujuan.size() - 1;
+            
+             //mengambil koordinat random dari tujuan disimpan ke min
             min = tujuan.get(i);
             System.out.println(" isinya apa: " + min);
 
@@ -123,8 +126,7 @@ public class RandomWaypointAldy1 extends MovementModel {
 
             //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
             tujuan.remove(i);
-            //mengambil koordinat random dari tujuan disimpan ke c
-//            c = tujuan.get(i);
+            
 
         }
         this.lastWaypoint = location;
