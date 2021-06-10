@@ -9,6 +9,7 @@ import core.DTNHost;
 import core.Settings;
 import core.SimScenario;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,10 +30,9 @@ public class RandomWaypointAldy1 extends MovementModel {
     private Coord lastWaypoint;
     private Coord startLoc;
     private Coord location;
-    private int z;
+    private double z;
 
     private List<Coord> tujuan = new ArrayList<Coord>();
-//        private List<Coord> sudah = new ArrayList<Coord>();
 
     public RandomWaypointAldy1(Settings settings) {
         super(settings);
@@ -78,58 +78,53 @@ public class RandomWaypointAldy1 extends MovementModel {
                 selama list tujuan masih ada isinya maka dia akan dijalankan
                 untuk mengambil koordinat ke dalam waypoint
          */
-
         while (tujuan.size() != 0) {
-            //index, untuk mengambil koordinat dari list tujuan, didapat secara random
-//            int i = randomTujuan(tujuan.size() - 1);
 
-//           
-            Map<Coord, Integer> jaraknya = new HashMap<Coord, Integer>();
+            Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
 
             for (Coord zi : tujuan) {
-                z = (int) c.distance(zi);
+                z = c.distance(zi);
                 jaraknya.put(zi, z);
-                System.out.println(zi + "jarak : " + jaraknya.get(zi));
-            }
-
+//                System.out.println(zi + "jarak : " + jaraknya.get(zi));
+            }         
 //            Entry<Coord, Double> minimum = null;
             Coord min = null;
-            for (Map.Entry<Coord, Integer> entry : jaraknya.entrySet()) {
-//                Coord b = entry.getKey();
-                Integer value = entry.getValue();
+            double bebas = Double.MAX_VALUE;
+            
+            for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
+                Coord b = entry.getKey();
+                Double value = entry.getValue();
+                
+                System.out.println("b : " + b+ " value : " + value);
+//                if ( value < bebas) {
+//                    min = entry.getKey();
+//                    bebas = entry.getValue();
+//                    
+//                }
                 if (min == null) {
                     min = entry.getKey();
                 } else {
                     if (entry.getValue() < jaraknya.get(min)) {
+//                        System.out.println("entry = " + entry.getValue());
+//                        System.out.println("min = " + jaraknya.get(min));
+
                         min = entry.getKey();
-//                        jaraknya.put(min, z);
                     }
+//                    System.out.println("entry 2 = " + entry.getValue());
+//                    System.out.println("min 2 = " + jaraknya.get(min));
                 }
-
-//                    if (minimum == null || minimum.getValue() > entry.getValue()) {
-//                        minimum = entry;
-//
-//                    }
-//                    jaraknya.put(entry.getKey(), minimum.getValue());
-//                jaraknya.put(entry.getKey(), z);
-//                jaraknya.remove(entry.getKey());
+               
             }
-            //index, untuk mengambil koordinat dari list tujuan,
-            int i = tujuan.size() - 1;
-            
-             //mengambil koordinat random dari tujuan disimpan ke min
-            min = tujuan.get(i);
-            System.out.println(" isinya apa: " + min);
-
-            //masukkan koordinat ke path
+            System.out.println("coord : " + min + " jarak :" +jaraknya.get(min));
+   
             p.addWaypoint(min);
-
+            tujuan.remove(min);
+            //masukkan koordinat ke path
             //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
-            tujuan.remove(i);
-            
-
         }
+        
         this.lastWaypoint = location;
+        p.addWaypoint(this.startLoc);
         return p;
     }
 
@@ -158,6 +153,7 @@ public class RandomWaypointAldy1 extends MovementModel {
             }
         }
         //memasukkan lokasi asal ke list tujuan
+       // this.location = this.startLoc;
         tujuan.add(this.startLoc);
     }
 
