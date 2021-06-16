@@ -1,4 +1,4 @@
-/* 
+ /* 
  * Copyright 2010 Aalto University, ComNet
  * Released under GPLv3. See LICENSE.txt for details. 
  */
@@ -21,6 +21,8 @@ import static movement.MovementModel.rng;
  * Random waypoint movement model. Creates zig-zag paths within the simulation
  * area.
  */
+
+
 public class RandomWaypointAldy1 extends MovementModel {
 
     /**
@@ -86,16 +88,16 @@ public class RandomWaypointAldy1 extends MovementModel {
                 z = c.distance(zi);
                 jaraknya.put(zi, z);
 //                System.out.println(zi + "jarak : " + jaraknya.get(zi));
-            }         
+            }
 //            Entry<Coord, Double> minimum = null;
             Coord min = null;
             double bebas = Double.MAX_VALUE;
-            
+
             for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
                 Coord b = entry.getKey();
                 Double value = entry.getValue();
-                
-                System.out.println("b : " + b+ " value : " + value);
+
+                System.out.println("b : " + b + " value : " + value);
 //                if ( value < bebas) {
 //                    min = entry.getKey();
 //                    bebas = entry.getValue();
@@ -113,16 +115,16 @@ public class RandomWaypointAldy1 extends MovementModel {
 //                    System.out.println("entry 2 = " + entry.getValue());
 //                    System.out.println("min 2 = " + jaraknya.get(min));
                 }
-               
+
             }
-            System.out.println("coord : " + min + " jarak :" +jaraknya.get(min));
-   
+            System.out.println("coord : " + min + " jarak :" + jaraknya.get(min));
+
             p.addWaypoint(min);
             tujuan.remove(min);
             //masukkan koordinat ke path
             //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
         }
-        
+
         this.lastWaypoint = location;
         p.addWaypoint(this.startLoc);
         return p;
@@ -153,7 +155,7 @@ public class RandomWaypointAldy1 extends MovementModel {
             }
         }
         //memasukkan lokasi asal ke list tujuan
-       // this.location = this.startLoc;
+        // this.location = this.startLoc;
         tujuan.add(this.startLoc);
     }
 

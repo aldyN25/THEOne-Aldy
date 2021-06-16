@@ -72,6 +72,21 @@ public class Coord implements Cloneable, Comparable<Coord> {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    public double distanceTSP(Coord other) {
+        double d = 0.0;
+        double dx = this.x - other.x;
+        double dy = this.y - other.y;
+        double ds[][] = {{dx}, {dy}};
+        for (int i = 0; i < dx; i++) {
+            for (int j = 0; j < dy; j++) {
+                d= Math.sqrt(dx * dx + dy * dy);
+            }
+
+        }
+
+        return d;
+    }
+
     /**
      * Returns the x coordinate
      *
