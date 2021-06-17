@@ -34,6 +34,7 @@ public class RandomWaypointAldy2 extends MovementModel {
     public int currPos, cities, count, cost, hamiltonianCycle;
     public double d;
     private int distance[][];
+    private Coord c = lastWaypoint;
 
     private List<Coord> tujuan = new ArrayList<Coord>();
 
@@ -76,7 +77,7 @@ public class RandomWaypointAldy2 extends MovementModel {
 
         Path p;
         p = new Path(generateSpeed());
-        Coord c = lastWaypoint;
+        c = lastWaypoint;
         /*
                 selama list tujuan masih ada isinya maka dia akan dijalankan
                 untuk mengambil koordinat ke dalam waypoint
@@ -86,65 +87,82 @@ public class RandomWaypointAldy2 extends MovementModel {
             Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
 
             for (Coord zi : tujuan) {
-                d = c.distanceTSP(zi);
+
+                d = zi.distanceTSP(c);
                 jaraknya.put(zi, d);
-                System.out.println(jaraknya.get(zi) + "Jarak :" + zi);
+                System.out.println( "Distance From Node : " + zi + " To Node : " + zi +" jarak : " + d);
 
             }
-
+            Coord min = null;
+            double bebas = Double.MAX_VALUE;
             for (Entry<Coord, Double> entry : jaraknya.entrySet()) {
 
-                Coord key = entry.getKey();
+                Coord b = entry.getKey();
                 Double value = entry.getValue();
 
+                System.out.println("b : " + b + " value : " + value);
+//                if ( value < bebas) {
+//                    min = entry.getKey();
+//                    bebas = entry.getValue();
+//                    
+//                }
+                if (min == null) {
+                    min = entry.getKey();
+                } else {
+                    if (entry.getValue() < jaraknya.get(min)) {
+//                        System.out.println("entry = " + entry.getValue());
+//                        System.out.println("min = " + jaraknya.get(min));
+
+                        min = entry.getKey();
+                    }
+//                    System.out.println("entry 2 = " + entry.getValue());
+//                    System.out.println("min 2 = " + jaraknya.get(min));
+                }
+
             }
-            p.addWaypoint(c);
-            // create an array of type boolean to check if a node has been visited or not  
+            System.out.println("coord : " + min + " jarak :" + jaraknya.get(min));
 
+            p.addWaypoint(min);
+            tujuan.remove(min);
+            //masukkan koordinat ke path
+            //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
         }
-
         this.lastWaypoint = location;
         p.addWaypoint(this.startLoc);
         return p;
     }
-
-    public int findHamiltonCycle() {
-        if (count == tujuan.size() && distance[currPos][0] > 0) {
-            hamiltonianCycle = (int) Math.min(hamiltonianCycle, cost + distance[currPos][0]);
-            return hamiltonianCycle;
-        }
-
-        for (int i = 0; i < tujuan.size(); i++) {
-            if (visitCity[i] == false && distance[currPos][i] > 0) {
-
-                // Mark as visited  
-                visitCity[i] = true;
-                hamiltonianCycle = findHamiltonCycle();
-
-                // Mark ith node as unvisited  
-                visitCity[i] = false;
-            }
-        }
-        return hamiltonianCycle;
-
-    }
-
-//    public double distanceTSP(Coord other) {
-//        double dist = 0;
-//        int distance[][] = new int[tujuan.add(getl)][tujuan];
-//        for (int i = 0; i < 5; i++) {
-//            for (int j = 0; j < 5; j++) {
 //
-////                distance[i][j] = sc.nextInt();
-//                dist = distance[i][j];
-//                System.out.println("Distance from city" + (i + 1) + " to city" + (j + 1) + ": ");
+//    public int findHamiltonCycle() {
+//        if (count == tujuan.size() && distance[currPos][0] > 0) {
+//            hamiltonianCycle = (int) Math.min(hamiltonianCycle, cost + distance[currPos][0]);
+//            return hamiltonianCycle;
+//        }
 //
+//        for (int i = 0; i < tujuan.size(); i++) {
+//            if (visitCity[i] == false && distance[currPos][i] > 0) {
+//
+//                // Mark as visited  
+//                visitCity[i] = true;
+//                hamiltonianCycle = findHamiltonCycle();
+//
+//                // Mark ith node as unvisited  
+//                visitCity[i] = false;
 //            }
 //        }
-//        System.out.println(" dist : " + dist);
-//        return dist;
+//        return hamiltonianCycle;
 //
 //    }
+//
+//    public double distanceTSP() {
+//        double dist = 0;
+//        if (dist == 0) {
+//            double tourDistance = 0;
+//            for
+//        }
+//        return 0;
+//        
+//    }
+
     @Override
     public RandomWaypointAldy2 replicate() {
         return new RandomWaypointAldy2(this);

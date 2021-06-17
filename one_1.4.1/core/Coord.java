@@ -73,18 +73,30 @@ public class Coord implements Cloneable, Comparable<Coord> {
     }
 
     public double distanceTSP(Coord other) {
-        double d = 0.0;
+        int d = 0;
         double dx = this.x - other.x;
         double dy = this.y - other.y;
+
         double ds[][] = {{dx}, {dy}};
-        for (int i = 0; i < dx; i++) {
-            for (int j = 0; j < dy; j++) {
-                d= Math.sqrt(dx * dx + dy * dy);
+        for (int n = 0; n < ds.length; n++) {
+            for (int m = 0; m < ds.length; m++) {
+                d = (int) Math.sqrt(dx * dx + dy * dy);
+                  System.out.println("Distance from city" + (n + 1) + " to city" + (m + 1) + " Distance: " + d);
+                System.out.println("Apa isi d: " + d);
             }
 
         }
 
+//        d = (int) Math.sqrt(d);
         return d;
+//       
+//        double ds[][] = {{dx}, {dy}};
+//        for (int i = 0; i < dx; i++) {
+//            for (int j = 0; j < dy; j++) {
+//                d= Math.sqrt(dx * dx + dy * dy);
+//            }
+//
+//        }
     }
 
     /**
