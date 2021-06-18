@@ -30,13 +30,10 @@ public class RandomWaypointAldy2 extends MovementModel {
     private Coord lastWaypoint;
     private Coord startLoc;
     private Coord location;
-    public boolean[] visitCity;
-    public int currPos, cities, count, cost, hamiltonianCycle;
     public double d;
-    private int distance[][];
-    private Coord c = lastWaypoint;
 
     private List<Coord> tujuan = new ArrayList<Coord>();
+    private Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
 
     public RandomWaypointAldy2(Settings settings) {
         super(settings);
@@ -77,51 +74,29 @@ public class RandomWaypointAldy2 extends MovementModel {
 
         Path p;
         p = new Path(generateSpeed());
-        c = lastWaypoint;
+        Coord c = lastWaypoint;
+        System.out.println("Isi C" + c);
+
         /*
                 selama list tujuan masih ada isinya maka dia akan dijalankan
                 untuk mengambil koordinat ke dalam waypoint
          */
         while (tujuan.size() != 0) {
-
-            Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
-
-            for (Coord zi : tujuan) {
-
-                d = zi.distanceTSP(c);
-                jaraknya.put(zi, d);
-                System.out.println( "Distance From Node : " + zi + " To Node : " + zi +" jarak : " + d);
-
-            }
+            getDistanceTSP();
+//            for (Coord zi : tujuan) {
+//                d = c.distanceTSP(zi);
+//                jaraknya.put(zi, d);
+//                System.out.println("Isi D:" + d);
+//
+//            }
+//            System.out.println("Distance From Node : " + (tujuan.get(10)) + " To Node : " + (tujuan.get(2)) + " jarak : " + jaraknya);
             Coord min = null;
             double bebas = Double.MAX_VALUE;
-            for (Entry<Coord, Double> entry : jaraknya.entrySet()) {
-
+            for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
                 Coord b = entry.getKey();
                 Double value = entry.getValue();
 
-                System.out.println("b : " + b + " value : " + value);
-//                if ( value < bebas) {
-//                    min = entry.getKey();
-//                    bebas = entry.getValue();
-//                    
-//                }
-                if (min == null) {
-                    min = entry.getKey();
-                } else {
-                    if (entry.getValue() < jaraknya.get(min)) {
-//                        System.out.println("entry = " + entry.getValue());
-//                        System.out.println("min = " + jaraknya.get(min));
-
-                        min = entry.getKey();
-                    }
-//                    System.out.println("entry 2 = " + entry.getValue());
-//                    System.out.println("min 2 = " + jaraknya.get(min));
-                }
-
             }
-            System.out.println("coord : " + min + " jarak :" + jaraknya.get(min));
-
             p.addWaypoint(min);
             tujuan.remove(min);
             //masukkan koordinat ke path
@@ -131,37 +106,59 @@ public class RandomWaypointAldy2 extends MovementModel {
         p.addWaypoint(this.startLoc);
         return p;
     }
-//
-//    public int findHamiltonCycle() {
-//        if (count == tujuan.size() && distance[currPos][0] > 0) {
-//            hamiltonianCycle = (int) Math.min(hamiltonianCycle, cost + distance[currPos][0]);
-//            return hamiltonianCycle;
-//        }
-//
-//        for (int i = 0; i < tujuan.size(); i++) {
-//            if (visitCity[i] == false && distance[currPos][i] > 0) {
-//
-//                // Mark as visited  
-//                visitCity[i] = true;
-//                hamiltonianCycle = findHamiltonCycle();
-//
-//                // Mark ith node as unvisited  
-//                visitCity[i] = false;
-//            }
-//        }
-//        return hamiltonianCycle;
-//
-//    }
-//
-//    public double distanceTSP() {
-//        double dist = 0;
-//        if (dist == 0) {
-//            double tourDistance = 0;
-//            for
-//        }
-//        return 0;
-//        
-//    }
+
+    /**
+     *
+     * @param other
+     * @return
+     */
+    public double getDistanceTSP() {
+        int a = tujuan.size();
+        int dista[][] = new int[a][a];
+        double k = 0;
+        for (int i = 0; i < i; i++) {
+            for (int j = 0; j < i; j++) {
+                k = dista[i][j];
+            }
+        }
+        System.out.println("isi K : " + k);
+        return k;
+    }
+
+    // create findHamiltonianCycle() method to get minimum weighted cycle   
+    public double findHamiltonianCycle() {
+      
+        boolean[] visitCity = null;
+        double hamiltonianCycle = 0;
+        int count = 0;
+        int cost = 0;
+        
+        if (count == tujuan.size() && getDistanceTSP() > 0) {
+            hamiltonianCycle = Math.min(hamiltonianCycle, 1 + getDistanceTSP());
+            return hamiltonianCycle;
+        }
+
+        // BACKTRACKING STEP  
+        for (int i = 0; i < tujuan.size(); i++) {
+            if (visitCity[i] == false && getDistanceTSP() > 0) {
+
+                // Mark as visited  
+                visitCity[i] = true;
+                hamiltonianCycle = findHamiltonianCycle();
+
+                // Mark ith node as unvisited  
+                visitCity[i] = false;
+            }
+        }
+        return hamiltonianCycle;
+    }
+
+    public boolean vstCity() {
+        boolean[] visitCity = new boolean[tujuan.size()];
+
+        return visitCity[0] = true;
+
+    }
 
     @Override
     public RandomWaypointAldy2 replicate() {
@@ -223,3 +220,13 @@ public class RandomWaypointAldy2 extends MovementModel {
 //
 //            }
 //            System.out.println("coord : " + min + " jarak :" + jaraknya.get(min));
+//        int dest = 0;
+//        for (int i = 0; i < tujuan.size(); i++) {
+//            Coord starting = getCoord(i);
+//            if (i + 1 < tujuan.size()) {
+//                other = getCoord(i + 1);
+//            } else {
+//                other = getCoord(0);
+//            }
+//            dest += starting.distanceTSP(other);
+

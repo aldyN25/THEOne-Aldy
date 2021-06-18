@@ -60,21 +60,22 @@ public class RandomWaypointBaru extends MovementModel {
 
     @Override
     public Path getPath() {
+        ambilSemuaTujuan();
+        Path p = new Path(generateSpeed());
+        p.addWaypoint(this.lastWaypoint.clone());
+        Coord c = this.lastWaypoint;
 //        for (int i = 1; i < PATH_LENGTH; i++) {
 //            int rand = j.nextInt(4);
 //            System.out.println(rand);
 //            dest = GetNextPath().get(rand);
-//            c = dest.getLocation();
-        ambilSemuaTujuan();
-        Path p = new Path(generateSpeed());
-        p.addWaypoint(this.lastWaypoint.clone());
+//        c = dest.getLocation();
+
         if (this.sudahDilewati.size() != this.tujuan.size()) {
-            Coord c = this.lastWaypoint;
 
             for (int i = 0; i < this.tujuan.size(); i++) {
                 int randomIndex = rand.nextInt(tujuan.size());
                 dest = this.tujuan.get(randomIndex);
-                
+
                 for (Coord loc : this.tujuan) {
                     c = dest;
                     p.addWaypoint(c);
@@ -83,7 +84,7 @@ public class RandomWaypointBaru extends MovementModel {
                 }
 //                System.out.println(tujuan.remove(c));
             }
-              tujuan.remove(c);
+            tujuan.remove(c);
 //            System.out.println(tujuan.remove(c));
             this.lastWaypoint = c;
         } else {

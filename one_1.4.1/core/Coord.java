@@ -81,22 +81,12 @@ public class Coord implements Cloneable, Comparable<Coord> {
         for (int n = 0; n < ds.length; n++) {
             for (int m = 0; m < ds.length; m++) {
                 d = (int) Math.sqrt(dx * dx + dy * dy);
-                  System.out.println("Distance from city" + (n + 1) + " to city" + (m + 1) + " Distance: " + d);
-                System.out.println("Apa isi d: " + d);
+//                  System.out.println("Distance from city" + (n + 1) + " to city" + (m + 1) + " Distance: " + d);
+//                System.out.println("Apa isi d: " + d);
             }
 
         }
-
-//        d = (int) Math.sqrt(d);
         return d;
-//       
-//        double ds[][] = {{dx}, {dy}};
-//        for (int i = 0; i < dx; i++) {
-//            for (int j = 0; j < dy; j++) {
-//                d= Math.sqrt(dx * dx + dy * dy);
-//            }
-//
-//        }
     }
 
     /**
@@ -172,9 +162,11 @@ public class Coord implements Cloneable, Comparable<Coord> {
      * smaller comes first and if y values are equal, the one with smaller x
      * value comes first.
      *
+     * @param other
      * @return -1, 0 or 1 if this node is before, in the same place or after the
      * other coordinate
      */
+    @Override
     public int compareTo(Coord other) {
         if (this.y < other.y) {
             return -1;
