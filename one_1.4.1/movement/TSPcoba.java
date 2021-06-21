@@ -23,6 +23,10 @@ public class TSPcoba {
             return hamiltonianCycle;
         }
 
+        System.out.println("Cost : " + cost);
+        System.out.println("Count : " + count);
+        System.out.println("Currpos : " + currPos);
+        System.out.println("Visit : " + visitCity);
         // BACKTRACKING STEP  
         for (int i = 0; i < cities; i++) {
             if (visitCity[i] == false && distance[currPos][i] > 0) {
@@ -48,7 +52,6 @@ public class TSPcoba {
         // get total number of cities from the user  
         System.out.println("Enter total number of cities ");
         cities = sc.nextInt();
-
         //get distance of cities from the user  
         int distance[][] = new int[cities][cities];
         for (int i = 0; i < cities; i++) {

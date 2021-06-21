@@ -11,10 +11,8 @@ import core.SimScenario;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import static movement.MovementModel.rng;
 
 /**
@@ -30,7 +28,6 @@ public class RandomWaypointAldy2 extends MovementModel {
     private Coord lastWaypoint;
     private Coord startLoc;
     private Coord location;
-    public double d;
 
     private List<Coord> tujuan = new ArrayList<Coord>();
     private Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
@@ -75,89 +72,91 @@ public class RandomWaypointAldy2 extends MovementModel {
         Path p;
         p = new Path(generateSpeed());
         Coord c = lastWaypoint;
-        System.out.println("Isi C" + c);
+        double d = 0;
 
         /*
                 selama list tujuan masih ada isinya maka dia akan dijalankan
                 untuk mengambil koordinat ke dalam waypoint
          */
         while (tujuan.size() != 0) {
-            getDistanceTSP();
-//            for (Coord zi : tujuan) {
-//                d = c.distanceTSP(zi);
-//                jaraknya.put(zi, d);
-//                System.out.println("Isi D:" + d);
+
+            for (Coord zi : tujuan) {
+                d = c.distance(zi);
+
+                jaraknya.put(zi, d);
+            }
+//            // create an array of type boolean to check if a node has been visited or not  
+            boolean[] visitCity = new boolean[tujuan.size()];
 //
-//            }
-//            System.out.println("Distance From Node : " + (tujuan.get(10)) + " To Node : " + (tujuan.get(2)) + " jarak : " + jaraknya);
+//            // by default, we make the first city visited  
+            visitCity[0] = true;
+
+            double hamiltonianCycle = Double.MAX_VALUE;
+
             Coord min = null;
             double bebas = Double.MAX_VALUE;
+            hamiltonianCycle = findHamiltonianCycle(d, visitCity, 0, tujuan.size(), 1, 0, hamiltonianCycle);
+
             for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
                 Coord b = entry.getKey();
                 Double value = entry.getValue();
 
+                if (min == null) {
+                    min = entry.getKey();
+                    d = entry.getValue();
+                } else {
+                    if (entry.getValue() < jaraknya.get(hamiltonianCycle)) {
+
+                        min = entry.getKey();
+
+                    }
+//                    min = hamiltonianCycle;
+//                    d = entry.getValue();
+                }
+
+                jaraknya.put(min, bebas);
+                System.out.println("hamiltonCycle: " + hamiltonianCycle);
             }
-            p.addWaypoint(min);
-            tujuan.remove(min);
             //masukkan koordinat ke path
+            p.addWaypoint(min);
+
             //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
+            tujuan.remove(min);
+
         }
         this.lastWaypoint = location;
-        p.addWaypoint(this.startLoc);
+//        p.addWaypoint(this.startLoc);
         return p;
     }
 
-    /**
-     *
-     * @param other
-     * @return
-     */
-    public double getDistanceTSP() {
-        int a = tujuan.size();
-        int dista[][] = new int[a][a];
-        double k = 0;
-        for (int i = 0; i < i; i++) {
-            for (int j = 0; j < i; j++) {
-                k = dista[i][j];
-            }
-        }
-        System.out.println("isi K : " + k);
-        return k;
-    }
-
     // create findHamiltonianCycle() method to get minimum weighted cycle   
-    public double findHamiltonianCycle() {
+    public double findHamiltonianCycle(double distance, boolean[] visitCity, int currPos, int cities, int count, int cost, double hamiltonianCycle) {
+      double d = 0;
       
-        boolean[] visitCity = null;
-        double hamiltonianCycle = 0;
-        int count = 0;
-        int cost = 0;
-        
-        if (count == tujuan.size() && getDistanceTSP() > 0) {
-            hamiltonianCycle = Math.min(hamiltonianCycle, 1 + getDistanceTSP());
+        for (Coord zi : tujuan) {
+            d = location.distance(zi);
+
+            jaraknya.put(zi, d);
+        }
+        if (count == tujuan.size() && d > 0) {
+            hamiltonianCycle = Math.min(hamiltonianCycle, cost + d);
+//            hamiltonianCycle = Math.min(hamiltonianCycle, cost + distance);
             return hamiltonianCycle;
         }
 
         // BACKTRACKING STEP  
         for (int i = 0; i < tujuan.size(); i++) {
-            if (visitCity[i] == false && getDistanceTSP() > 0) {
+            if (visitCity[i] == false && d > 0) {
 
                 // Mark as visited  
                 visitCity[i] = true;
-                hamiltonianCycle = findHamiltonianCycle();
+                hamiltonianCycle = findHamiltonianCycle(d, visitCity, i, tujuan.size(), count + 1, cost, hamiltonianCycle);
 
                 // Mark ith node as unvisited  
                 visitCity[i] = false;
             }
         }
         return hamiltonianCycle;
-    }
-
-    public boolean vstCity() {
-        boolean[] visitCity = new boolean[tujuan.size()];
-
-        return visitCity[0] = true;
-
     }
 
     @Override
