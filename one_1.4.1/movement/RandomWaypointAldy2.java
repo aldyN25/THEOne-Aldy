@@ -104,8 +104,9 @@ public class RandomWaypointAldy2 extends MovementModel {
                 if (min == null) {
                     min = entry.getKey();
                     d = entry.getValue();
+                    System.out.println("d : " + jaraknya);
                 } else {
-                    if (entry.getValue() < jaraknya.get(hamiltonianCycle)) {
+                    if (entry.getValue() < jaraknya.get(min)) {
 
                         min = entry.getKey();
 

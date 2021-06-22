@@ -72,29 +72,21 @@ public class Coord implements Cloneable, Comparable<Coord> {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public double distanceTSP(Coord other) {
-        int d = 0;
-        double dx = this.x - other.x;
-        double dy = this.y - other.y;
+    public double distanceTSP(Coord a, Coord b) {
 
-        double ds[][] = {{dx}, {dy}};
-        for (int n = 0; n < ds.length; n++) {
-            for (int m = 0; m < ds.length; m++) {
-                d = (int) Math.sqrt(dx * dx + dy * dy);
-//                  System.out.println("Distance from city" + (n + 1) + " to city" + (m + 1) + " Distance: " + d);
-//                System.out.println("Apa isi d: " + d);
-            }
-
-        }
-        return d;
+        double yDistance = Math.abs(b.y - a.y);
+        double xDistance = Math.abs(b.x - a.x);
+        // distance = square root of (yDistance^2 + xDistance^2)
+        double distance = Math.sqrt(Math.pow(yDistance, 2) + Math.pow(xDistance, 2));
+        return distance;
     }
 
-    /**
-     * Returns the x coordinate
-     *
-     * @return x coordinate
-     */
-    public double getX() {
+/**
+ * Returns the x coordinate
+ *
+ * @return x coordinate
+ */
+public double getX() {
         return this.x;
     }
 
@@ -145,7 +137,7 @@ public class Coord implements Cloneable, Comparable<Coord> {
     }
 
     @Override
-    public boolean equals(Object o) {
+        public boolean equals(Object o) {
         return equals((Coord) o);
     }
 
@@ -167,7 +159,7 @@ public class Coord implements Cloneable, Comparable<Coord> {
      * other coordinate
      */
     @Override
-    public int compareTo(Coord other) {
+        public int compareTo(Coord other) {
         if (this.y < other.y) {
             return -1;
         } else if (this.y > other.y) {
