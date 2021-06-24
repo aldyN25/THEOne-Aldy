@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import static movement.MovementModel.rng;
 
 /**
@@ -28,9 +29,13 @@ public class RandomWaypointAldy2 extends MovementModel {
     private Coord lastWaypoint;
     private Coord startLoc;
     private Coord location;
+    private double[][] adjacencyMatrix;
+    private double[][] jrk;
 
+    private Coord m;
     private List<Coord> tujuan = new ArrayList<Coord>();
     private Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
+    private Map<Coord, List<Double>> jarakk = new HashMap<Coord, List<Double>>();
 
     public RandomWaypointAldy2(Settings settings) {
         super(settings);
@@ -43,6 +48,7 @@ public class RandomWaypointAldy2 extends MovementModel {
 
     protected RandomWaypointAldy2(RandomWaypointAldy2 rwp) {
         super(rwp);
+
         this.location = rwp.location;
         this.startLoc = rwp.startLoc;
     }
@@ -60,6 +66,10 @@ public class RandomWaypointAldy2 extends MovementModel {
 
     }
 
+    public double[][] getAdjacencyMatrix() {
+        return adjacencyMatrix;
+    }
+
     @Override
     public Path getPath() {
 
@@ -68,96 +78,140 @@ public class RandomWaypointAldy2 extends MovementModel {
             //menjalankan method ambil tujuan
             ambilSemuaTujuan();
         }
-
+        Matrix();
         Path p;
         p = new Path(generateSpeed());
         Coord c = lastWaypoint;
-        double d = 0;
+
 
         /*
                 selama list tujuan masih ada isinya maka dia akan dijalankan
                 untuk mengambil koordinat ke dalam waypoint
          */
+//        int a = tujuan.size();
+//        adjacencyMatrix = new double[a][a];
+//
+//        for (int i = 0; i < a; i++) {
+//            for (int j = 0; j < a; j++) {
+//                adjacencyMatrix[i][j] = m.distanceTSP(tujuan.get(i), tujuan.get(j));
+//            }
+//        }
         while (tujuan.size() != 0) {
 
-            for (Coord zi : tujuan) {
-                d = c.distance(zi);
-
-                jaraknya.put(zi, d);
-            }
-//            // create an array of type boolean to check if a node has been visited or not  
-            boolean[] visitCity = new boolean[tujuan.size()];
-//
-//            // by default, we make the first city visited  
-            visitCity[0] = true;
-
-            double hamiltonianCycle = Double.MAX_VALUE;
-
-            Coord min = null;
-            double bebas = Double.MAX_VALUE;
-            hamiltonianCycle = findHamiltonianCycle(d, visitCity, 0, tujuan.size(), 1, 0, hamiltonianCycle);
-
-            for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
-                Coord b = entry.getKey();
-                Double value = entry.getValue();
-
-                if (min == null) {
-                    min = entry.getKey();
-                    d = entry.getValue();
-                    System.out.println("d : " + jaraknya);
-                } else {
-                    if (entry.getValue() < jaraknya.get(min)) {
-
-                        min = entry.getKey();
-
-                    }
-//                    min = hamiltonianCycle;
-//                    d = entry.getValue();
+            for (int i = 0; i < tujuan.size(); i++) {
+                List<Double> dl = new ArrayList<Double>();
+                for (int j = 0; j < tujuan.size(); j++) {
+                    dl.add(jrk[i][j]);
                 }
 
-                jaraknya.put(min, bebas);
-                System.out.println("hamiltonCycle: " + hamiltonianCycle);
+                jarakk.put(tujuan.get(i), dl);
+                System.out.println("isi DL: " + dl);
+                System.out.println("isi Tujuan get i:" + tujuan.get(i));
+//                System.out.println("jarak baru: " + jarakk.get(i));
             }
+            for (int index = 0; index < jarakk.size(); index++) {
+                System.out.println("jarak baru: " + jarakk.get(index));
+            }
+            Coord min = null;
+            double bebas = Double.MAX_VALUE;
+//            Entry<Coord, List<Double>> minn = null;
+            List<Double> dll = new ArrayList<Double>();
+            dll = jarakk.get(c);
+            System.out.println("jarak get C: "+ jarakk.get(c));
+            for (int i = 0; i < 11; i++) {
+//                System.out.println("isi BEbas : " + bebas + "Isi DLL :" + dll.get(i));
+                if (bebas >= dll.get(i) && dll.get(i) != 0) {
+                    bebas = dll.get(i);
+
+                }
+            }
+            System.out.println("isi Bebas : " + bebas);
+            for (int i = 0; i < 11; i++) {
+//                int i = jrk[i][i].
+//                if (jrk[][]) {
+//                        
+//                    }
+            }
+            for (Map.Entry<Coord, List<Double>> entry : jarakk.entrySet()) {
+
+                List<Double> value = entry.getValue();
+                System.out.println(" isi Value : " + value);
+                System.out.println("isi KEy :" + entry.getKey());
+                for (int i = 0; i < value.size(); i++) {
+                    if (bebas == value.get(i)) {
+                          System.out.println(" isi Value : " + value.get(i));
+                        min = entry.getKey();
+                    }
+                }
+
+            }
+            System.out.println("isi Min : " + min);
+            c = min;
+//            for (Map.Entry<Coord, List<Double>> entry : jarakk.entrySet()) {
+//                Coord key = entry.getKey();
+//                List<Double> value = entry.getValue();
+////                double[][] value = entry.getValue();
+//
+//                if (min == null) {
+//                    min = entry.getKey();
+////                    ds = entry.getValue();
+//
+//                } else {
+////                    if (value < jarakk.get(min)) {
+//                    min = entry.getKey();
+//                }
+////                    min = hamiltonianCycle;
+////                    d = entry.getValue();
+////                }
+//
+////                jarakk.put(min, ds);
+//            }
+//                System.out.println("hamiltonCycle: " + hamiltonianCycle);
+//            }
             //masukkan koordinat ke path
             p.addWaypoint(min);
 
             //menghapus koordinat tujuan dari list, ketika sudah ditambahkan ke path
             tujuan.remove(min);
+            jarakk.remove(min);
 
         }
         this.lastWaypoint = location;
-//        p.addWaypoint(this.startLoc);
+        p.addWaypoint(this.startLoc);
         return p;
     }
 
-    // create findHamiltonianCycle() method to get minimum weighted cycle   
-    public double findHamiltonianCycle(double distance, boolean[] visitCity, int currPos, int cities, int count, int cost, double hamiltonianCycle) {
-      double d = 0;
-      
-        for (Coord zi : tujuan) {
-            d = location.distance(zi);
+    public double[][] Matrix() {
+        int a = tujuan.size();
+        System.out.println("a :" + a);
+        System.out.println("TEst");
+        jrk = new double[a][a];
+        System.out.println("jrk :" + jrk.length);
+        Coord corr = null;
 
-            jaraknya.put(zi, d);
-        }
-        if (count == tujuan.size() && d > 0) {
-            hamiltonianCycle = Math.min(hamiltonianCycle, cost + d);
-//            hamiltonianCycle = Math.min(hamiltonianCycle, cost + distance);
-            return hamiltonianCycle;
-        }
+        for (int i = 0; i < a; i++) {
+            System.out.println(" isi tujuan : " + a);
+            corr = tujuan.get(i);
 
-        // BACKTRACKING STEP  
-        for (int i = 0; i < tujuan.size(); i++) {
-            if (visitCity[i] == false && d > 0) {
-
-                // Mark as visited  
-                visitCity[i] = true;
-                hamiltonianCycle = findHamiltonianCycle(d, visitCity, i, tujuan.size(), count + 1, cost, hamiltonianCycle);
-
-                // Mark ith node as unvisited  
-                visitCity[i] = false;
+            for (int j = 0; j < a; j++) {
+                if ((tujuan.get(i).getX() == tujuan.get(j).getX()) && (tujuan.get(i).getY() == tujuan.get(j).getY())) {
+                    jrk[i][j] = 0;
+                }
+                jrk[i][j] = corr.distance(tujuan.get(j));
             }
         }
-        return hamiltonianCycle;
+        for (int i = 0; i < tujuan.size(); i++) {
+            corr = tujuan.get(i);
+
+            System.out.println(corr.getX() + " " + corr.getY());
+            for (int j = 0; j < tujuan.size(); j++) {
+                System.out.println(tujuan.get(j).getX() + " " + tujuan.get(j).getY());
+
+                System.out.println(i + " Menuju " + j + " " + jrk[i][j]);
+
+            }
+        }
+        return jrk;
     }
 
     @Override
