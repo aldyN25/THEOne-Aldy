@@ -8,6 +8,7 @@ import core.Coord;
 import core.DTNHost;
 import core.Settings;
 import core.SimScenario;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,13 +30,12 @@ public class RandomWaypointAldy2 extends MovementModel {
     private Coord lastWaypoint;
     private Coord startLoc;
     private Coord location;
-    private double[][] adjacencyMatrix;
-    private double[][] jrk;
 
-    private Coord m;
+    private double[][] jrk;
     private List<Coord> tujuan = new ArrayList<Coord>();
-    private Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
+//    private Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
     private Map<Coord, List<Double>> jarakk = new HashMap<Coord, List<Double>>();
+    private DecimalFormat df = new DecimalFormat("#.##");
 
     public RandomWaypointAldy2(Settings settings) {
         super(settings);
@@ -61,13 +61,8 @@ public class RandomWaypointAldy2 extends MovementModel {
     @Override
     public Coord getInitialLocation() {
         this.lastWaypoint = this.location;
-//        tujuan.add(this.startLoc);
         return this.location;
 
-    }
-
-    public double[][] getAdjacencyMatrix() {
-        return adjacencyMatrix;
     }
 
     @Override
@@ -88,58 +83,63 @@ public class RandomWaypointAldy2 extends MovementModel {
                 selama list tujuan masih ada isinya maka dia akan dijalankan
                 untuk mengambil koordinat ke dalam waypoint
          */
-//        int a = tujuan.size();
-//        adjacencyMatrix = new double[a][a];
-//
-//        for (int i = 0; i < a; i++) {
-//            for (int j = 0; j < a; j++) {
-//                adjacencyMatrix[i][j] = m.distanceTSP(tujuan.get(i), tujuan.get(j));
-//            }
-//        }
         while (tujuan.size() != 0) {
 
+            List<Double> dl = new ArrayList<Double>();
             for (int i = 0; i < tujuan.size(); i++) {
-                List<Double> dl = new ArrayList<Double>();
+
                 for (int j = 0; j < tujuan.size(); j++) {
                     dl.add(jrk[i][j]);
+
                 }
 
                 jarakk.put(tujuan.get(i), dl);
                 System.out.println("isi DL: " + dl);
                 System.out.println("isi Tujuan get i:" + tujuan.get(i));
 //                System.out.println("jarak baru: " + jarakk.get(i));
+//                jarakk.get(tujuan.get(i));
+//                System.out.println("ISI JARAK mAP : " + jarakk.get(tujuan.get(i)));
             }
+
             for (int index = 0; index < jarakk.size(); index++) {
-                System.out.println("jarak baru: " + jarakk.get(index));
+                List<Double> d = jarakk.get(index);
+
+//                System.out.println("jarak baru: " + d);
             }
-            Coord min = null;
-            double bebas = Double.MAX_VALUE;
-//            Entry<Coord, List<Double>> minn = null;
+
             List<Double> dll = new ArrayList<Double>();
             dll = jarakk.get(c);
-            System.out.println("jarak get C: "+ jarakk.get(c));
-            for (int i = 0; i < 11; i++) {
-//                System.out.println("isi BEbas : " + bebas + "Isi DLL :" + dll.get(i));
-                if (bebas >= dll.get(i) && dll.get(i) != 0) {
+
+            double bebas = Double.MAX_VALUE;
+            System.out.println("jarak get C: " + dll);
+
+            for (int i = 0; i < tujuan.size(); i++) {
+
+                if (bebas > dll.get(i) && dll.get(i) != 0) {
                     bebas = dll.get(i);
 
                 }
+                System.out.println("isi Bebas : " + bebas + "Isi DLL :" + dll.get(i));
+
             }
-            System.out.println("isi Bebas : " + bebas);
-            for (int i = 0; i < 11; i++) {
+
+//            Entry<Coord, List<Double>> minn = null;
+////            System.out.println("isi Bebas : " + bebas);
+//            for (int i = 0; i < 11; i++) {
 //                int i = jrk[i][i].
 //                if (jrk[][]) {
 //                        
 //                    }
-            }
-            for (Map.Entry<Coord, List<Double>> entry : jarakk.entrySet()) {
+//            }
+            Coord min = null;
 
+            for (Map.Entry<Coord, List<Double>> entry : jarakk.entrySet()) {
+                Coord key = entry.getKey();
                 List<Double> value = entry.getValue();
-                System.out.println(" isi Value : " + value);
-                System.out.println("isi KEy :" + entry.getKey());
+
                 for (int i = 0; i < value.size(); i++) {
                     if (bebas == value.get(i)) {
-                          System.out.println(" isi Value : " + value.get(i));
+//                        System.out.println(" isi Value : " + value.get(i));
                         min = entry.getKey();
                     }
                 }
@@ -147,27 +147,6 @@ public class RandomWaypointAldy2 extends MovementModel {
             }
             System.out.println("isi Min : " + min);
             c = min;
-//            for (Map.Entry<Coord, List<Double>> entry : jarakk.entrySet()) {
-//                Coord key = entry.getKey();
-//                List<Double> value = entry.getValue();
-////                double[][] value = entry.getValue();
-//
-//                if (min == null) {
-//                    min = entry.getKey();
-////                    ds = entry.getValue();
-//
-//                } else {
-////                    if (value < jarakk.get(min)) {
-//                    min = entry.getKey();
-//                }
-////                    min = hamiltonianCycle;
-////                    d = entry.getValue();
-////                }
-//
-////                jarakk.put(min, ds);
-//            }
-//                System.out.println("hamiltonCycle: " + hamiltonianCycle);
-//            }
             //masukkan koordinat ke path
             p.addWaypoint(min);
 
@@ -183,14 +162,12 @@ public class RandomWaypointAldy2 extends MovementModel {
 
     public double[][] Matrix() {
         int a = tujuan.size();
-        System.out.println("a :" + a);
-        System.out.println("TEst");
         jrk = new double[a][a];
         System.out.println("jrk :" + jrk.length);
         Coord corr = null;
 
         for (int i = 0; i < a; i++) {
-            System.out.println(" isi tujuan : " + a);
+//            System.out.println(" isi tujuan : " + a);
             corr = tujuan.get(i);
 
             for (int j = 0; j < a; j++) {
@@ -203,12 +180,11 @@ public class RandomWaypointAldy2 extends MovementModel {
         for (int i = 0; i < tujuan.size(); i++) {
             corr = tujuan.get(i);
 
-            System.out.println(corr.getX() + " " + corr.getY());
+//            System.out.println(corr.getX() + " " + corr.getY());
             for (int j = 0; j < tujuan.size(); j++) {
                 System.out.println(tujuan.get(j).getX() + " " + tujuan.get(j).getY());
 
-                System.out.println(i + " Menuju " + j + " " + jrk[i][j]);
-
+//                System.out.println(i + " Menuju " + j + " " + jrk[i][j]);
             }
         }
         return jrk;
@@ -283,4 +259,24 @@ public class RandomWaypointAldy2 extends MovementModel {
 //                other = getCoord(0);
 //            }
 //            dest += starting.distanceTSP(other);
-
+//            for (Map.Entry<Coord, List<Double>> entry : jarakk.entrySet()) {
+//                Coord key = entry.getKey();
+//                List<Double> value = entry.getValue();
+////                double[][] value = entry.getValue();
+//
+//                if (min == null) {
+//                    min = entry.getKey();
+////                    ds = entry.getValue();
+//
+//                } else {
+////                    if (value < jarakk.get(min)) {
+//                    min = entry.getKey();
+//                }
+////                    min = hamiltonianCycle;
+////                    d = entry.getValue();
+////                }
+//
+////                jarakk.put(min, ds);
+//            }
+//                System.out.println("hamiltonCycle: " + hamiltonianCycle);
+//            }

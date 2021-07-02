@@ -28,13 +28,13 @@ public class cobaCoba extends MovementModel {
     private Coord location;
     private double[][] adjacencyMatrix;
     private List<Coord> tujuan = new ArrayList<Coord>();
-    static ArrayList<Integer> currentPath = new ArrayList<Integer>();
-    static ArrayList<ArrayList<Integer>> paths = new ArrayList<ArrayList<Integer>>();
+    private List<Integer> currentPath = new ArrayList<Integer>();
+    private ArrayList<ArrayList<Integer>> paths = new ArrayList<ArrayList<Integer>>();
 
-    static ArrayList<Double> pathDistances = new ArrayList<Double>();
-    static double distance;
-    private Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
-    static DecimalFormat df = new DecimalFormat("0.00");
+    private List<Double> pathDistances = new ArrayList<Double>();
+    private double distance;
+    private Map<Coord, List<Double>> jarakk = new HashMap<Coord, List<Double>>();
+    private DecimalFormat df = new DecimalFormat("0.00");
 
     public cobaCoba(Settings settings) {
         super(settings);
@@ -42,6 +42,16 @@ public class cobaCoba extends MovementModel {
         int[] coords = settings.getCsvInts("nodeLocation", 2);
         this.location = new Coord(coords[0], coords[1]);
         this.startLoc = new Coord(coords[0], coords[1]);
+
+        int a = tujuan.size();
+        adjacencyMatrix = new double[a][a];
+
+        // generate adjacency matrix based on the vertices
+        for (int i = 0; i < a; i++) {
+            for (int j = 0; j < a; j++) {
+                adjacencyMatrix[i][j] = m.distanceTSP(tujuan.get(i), tujuan.get(j));
+            }
+        }
 
     }
 
@@ -51,10 +61,16 @@ public class cobaCoba extends MovementModel {
         this.location = rwp.location;
         this.startLoc = rwp.startLoc;
 
-    }
+        int a = tujuan.size();
+        adjacencyMatrix = new double[a][a];
 
-    public double[][] getAdjacencyMatrix() {
-        return adjacencyMatrix;
+        // generate adjacency matrix based on the vertices
+        for (int i = 0; i < a; i++) {
+            for (int j = 0; j < a; j++) {
+                adjacencyMatrix[i][j] = m.distanceTSP(tujuan.get(i), tujuan.get(j));
+            }
+        }
+
     }
 
     @Override
@@ -79,35 +95,32 @@ public class cobaCoba extends MovementModel {
         Path p;
         p = new Path(generateSpeed());
         Coord c = lastWaypoint;
-        int a = tujuan.size();
-        adjacencyMatrix = new double[a][a];
 
-        // generate adjacency matrix based on the vertices
-        for (int i = 0; i < a; i++) {
-            for (int j = 0; j < a; j++) {
-                adjacencyMatrix[i][j] = m.distanceTSP(tujuan.get(i), tujuan.get(j));
-            }
-        }
-        
         for (int i = 0; i < tujuan.size(); i++) {
+
             currentPath.add(i);
             System.out.println("tujuan3: " + tujuan.size());
             System.out.println("curen :" + currentPath);
         }
 //        System.out.println("current : " + currentPath);
         ArrayList<Integer> newPath = new ArrayList<Integer>(currentPath);
-        paths.add(newPath);
+        this.paths.add(newPath);
         System.out.println("paths :" + paths);
 
+        // add a 0 at the beginning AND end of each path
+//        for (int i = 0; i < paths.size(); i++) {
+//            ArrayList<Integer> pathToModify = paths.get(i);
+//            pathToModify.add(0, 0);
+//            pathToModify.add(0);
+//            this.paths.set(i, pathToModify);
+//        }
         /*
                 selama list tujuan masih ada isinya maka dia akan dijalankan
                 untuk mengambil koordinat ke dalam waypoint
          */
-        Map<Coord, Double> jaraknya = new HashMap<Coord, Double>();
         for (int i = 0; i < paths.size(); i++) {
-
-            System.out.println("isi pathDist : " + paths.size());
-            pathDistances = generatePathDistances(paths, getAdjacencyMatrix());
+            pathDistances = generatePathDistances(this.paths, getAdjacencyMatrix());
+            System.out.println("isi pathDist : " + pathDistances);
         }
 
         while (tujuan.size() != 0) {
@@ -115,23 +128,13 @@ public class cobaCoba extends MovementModel {
             Coord min = null;
             double bebas = Double.MAX_VALUE;
 
-            for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
-                Coord b = entry.getKey();
-                Double value = entry.getValue();
-
-                System.out.println("b : " + b + " value : " + value);
-                if (min == null) {
-                    min = entry.getKey();
-                } else {
-                    if (entry.getValue() < jaraknya.get(min)) {
-
-                        min = entry.getKey();
-                    }
-                }
+            for (Map.Entry<Coord, List<Double>> entry : jarakk.entrySet()) {
+                Coord key = entry.getKey();
+                List<Double> value = entry.getValue();
 
             }
-//            System.out.println("coord : " + min + " jarak :" + jaraknya.get(min));
 
+//            System.out.println("coord : " + min + " jarak :" + jaraknya.get(min));
             p.addWaypoint(min);
             tujuan.remove(min);
         }
@@ -141,17 +144,47 @@ public class cobaCoba extends MovementModel {
         return p;
     }
 
+//    public List<Double> generatePathDistances(List<ArrayList<Integer>> paths, double[][] adjacencyMatrix) {
+//        System.out.println("tesstt");
+////        ArrayList<Double> pathDistances = new ArrayList<Double>();
+//        double currentDistance = 0.0;
+//        String roundedDistance = "";
+//
+//        for (int i = 0; i < this.paths.size(); i++) {
+//            System.out.println("pathGenerate i : " + this.paths.size() );
+//            for (int j = 0; j < this.paths.get(i).size() - 1; j++) {
+//                System.out.println("pathGenerate j : " + (this.paths.get(i).size() - 1));
+//                int first = this.paths.get(i).get(j);
+//                System.out.println("isi First :" + paths.get(i).get(j));
+//                int second = this.paths.get(i).get(j + 1);
+//                System.out.println("isi kedua :" + paths.get(i).get(j + 1));
+//                currentDistance += adjacencyMatrix[first][second];
+//                System.out.println("CurrentDist : " + currentDistance);
+//            }
+//            roundedDistance = String.format("%.4g%n", currentDistance);
+//            currentDistance = Double.parseDouble(roundedDistance);
+//            pathDistances.add(currentDistance);
+//            currentDistance = 0.0;
+//        }
+//        System.out.println("isi pathDist : " + pathDistances);
+//        return pathDistances;
+//    }
     public ArrayList<Double> generatePathDistances(ArrayList<ArrayList<Integer>> paths, double[][] adjacencyMatrix) {
+        System.out.println("TEssrt");
         ArrayList<Double> pathDistances = new ArrayList<Double>();
         double currentDistance = 0.0;
         String roundedDistance = "";
-
-        for (int i = 0; i < paths.size(); i++) {
-
-            for (int j = 0; j < paths.get(i).size() - 1; j++) {
-                int first = paths.get(i).get(j);
-                int second = paths.get(i).get(j + 1);
+        for (int i = 0; i < this.paths.size(); i++) {
+            System.out.println(" panjang paths : " + this.paths.size());
+            System.out.println("pathGenerate i : " + this.paths.get(i));
+            for (int j = 0; j < this.paths.get(i).size() - 1; j++) {
+                System.out.println("pathGenerate j : " + (this.paths.get(i).size() - 1));
+                int first = this.paths.get(i).get(j);
+                System.out.println("isi First :" + first);
+                int second = this.paths.get(i).get(j);
+                System.out.println("isi kedua :" + second);
                 currentDistance += adjacencyMatrix[first][second];
+                System.out.println("isi CurrDist : " + currentDistance);
             }
             roundedDistance = String.format("%.4g%n", currentDistance);
             currentDistance = Double.parseDouble(roundedDistance);
@@ -183,4 +216,24 @@ public class cobaCoba extends MovementModel {
     public cobaCoba replicate() {
         return new cobaCoba(this);
     }
+
+    public double[][] getAdjacencyMatrix() {
+        return adjacencyMatrix;
+    }
 }
+
+//            for (Map.Entry<Coord, Double> entry : jaraknya.entrySet()) {
+//                Coord b = entry.getKey();
+//                Double value = entry.getValue();
+//
+//                System.out.println("b : " + b + " value : " + value);
+//                if (min == null) {
+//                    min = entry.getKey();
+//                } else {
+//                    if (entry.getValue() < jaraknya.get(min)) {
+//
+//                        min = entry.getKey();
+//                    }
+//                }
+//
+//            }
